@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect , useState} from 'react';
+import socketIOClient from 'socket.io-client';
 import './App.css';
 
-function App() {
+function App() { 
+
+  const [color, setColor] = useState("yellow");
+  const [socket, setSocket] = useState(null);
+  document.body.style.backgroundColor = color;
+
+   useEffect(() => {
+
+    const socket = new socketIOClient('http://localhost:4000');
+    setSocket(socket);
+
+    // socket.emit('post scriptum', 123);
+
+  //   socket.on('ping', (message) => {
+  //     console.log(message);
+  //   })
+
+    socket.on('color received', (colorReceived) => {
+      console.log(colorReceived);
+      setColor(colorReceived);
+    });
+  }, []); 
+  
+   
+    const changeColor = (color) => {
+      setColor(color);
+      socket.emit('change color', color);
+
+}
+
+    
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Essaye pour voir !</h1>
+      <div>
+          <button className="green" onClick={() => changeColor("green")}>Green</button>
+          <button className="blue" onClick={() => changeColor("blue")}>Blue</button>
+          <button className="red" onClick={() => changeColor("red")}>Red</button>
+      </div>
     </div>
   );
-}
+  }
+
 
 export default App;
